@@ -26,18 +26,20 @@ CRGB Leds[NUM_LEDS];
 //
 // to prevent memory access issues, all rows must be fully populated
 
+#include "led_matrix_general.h"
+
 const CRGB Pattern[][LED_ROWS] = {
-#include "led_matrix_1.h"
+#include "words/led_matrix_HUSKIES.h"
 };
 
 
-int ScrollDelay = 100;      // milliseconds
+int ScrollDelay = 120;      // milliseconds
 
 #define COLUMN_COUNT    (sizeof(Pattern) / sizeof(Pattern[0]))
 
 
 void  showPattern(int scrollMode);
-void  loadColumn(CRGB pattern[][LED_ROWS], int from, int to);
+void  loadColumn(const CRGB pattern[][LED_ROWS], int from, int to);
 
 
 void setup() {
@@ -179,7 +181,7 @@ void showPattern(int scrollMode) {
 // even / odd handling is taken care of here based on where the data is going in
 // the LED matrix
 
-void loadColumn(CRGB pattern[][LED_ROWS], int from, int to) {
+void loadColumn(const CRGB pattern[][LED_ROWS], int from, int to) {
 
   int row, ledIndex;
 
