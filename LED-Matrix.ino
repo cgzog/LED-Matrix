@@ -4,11 +4,14 @@
 #define LED_COLS        16
 #define NUM_LEDS        (LED_ROWS * LED_COLS)
 
-#define LED_BRIGHTNESS  100
+#define LED_BRIGHTNESS  80
 
 #define SCROLL_IN_OUT 0     // start with black, scroll pattern in and then scroll pattern out
 #define SCROLL_FULL   1     // start with black, display the first 16 columns and then scroll
                             // leaving last column of pattern on the right edge of the display
+
+#define SCROLL_PRE_DELAY    1000    // ms - for SCROLL_FULL mode - wait this long before scrolling
+#define SCROLL_POST_DELAY   1000    // ms - for SCROLL_FULL mode - wait this long after scrolling
 
 
 CRGB Leds[NUM_LEDS];
@@ -24,7 +27,7 @@ CRGB Leds[NUM_LEDS];
 // to prevent memory access issues, all rows must be fully populated
 
 const CRGB Pattern[][LED_ROWS] = {
-#include "led_matrix_2.h"
+#include "led_matrix_1.h"
 };
 
 
@@ -103,6 +106,8 @@ void showPattern(int scrollMode) {
 
       FastLED.show();
 
+      delay(SCROLL_PRE_DELAY);                // if the display doesn't fill, we only delay once
+
       if (col < (LED_COLS - 1)) {
         return;                               // the pattern did not fill the matrix so we're done
       }
@@ -147,13 +152,16 @@ void showPattern(int scrollMode) {
   // for SCROLL_IN_OUT, we need to scroll things off to the left so we're all dark at the end
 
   if (scrollMode == SCROLL_FULL) {
+    delay(SCROLL_POST_DELAY);
     return;
   }
+
+  // we're in SCROLL_IN_OUT mode
 
   for (col = 0; col < LED_COLS ; col++) {
     delay(ScrollDelay);
     memmove(Leds, &Leds[LED_ROWS], sizeof(Leds[0])*(LED_ROWS*(LED_COLS-1)));   // slide 15 right cols left 1 col
-    fill_solid (&Leds[NUM_LEDS - LED_ROWS - 1], LED_ROWS, CRGB::Black); // but blacken the last column
+    fill_solid (&Leds[NUM_LEDS - LED_ROWS], LED_ROWS, CRGB::Black); // but blacken the last column
     FastLED.show();
   }
 }
