@@ -4,15 +4,6 @@
 #define LED_COLS        16
 #define NUM_LEDS        (LED_ROWS * LED_COLS)
 
-#define LED_BRIGHTNESS  65
-
-#define SCROLL_IN_OUT 0     // start with black, scroll pattern in and then scroll pattern out
-#define SCROLL_FULL   1     // start with black, display the first 16 columns and then scroll
-                            // leaving last column of pattern on the right edge of the display
-
-#define SCROLL_PRE_DELAY    1000    // ms - for SCROLL_FULL mode - wait this long before scrolling
-#define SCROLL_POST_DELAY   1000    // ms - for SCROLL_FULL mode - wait this long after scrolling
-
 
 CRGB Leds[NUM_LEDS];
 
@@ -30,7 +21,7 @@ CRGB Leds[NUM_LEDS];
 
 const CRGB Pattern[][LED_ROWS] = {
 
-#define SET_CLR       HSK_CLR           // make all the test "Husky" color
+#define SET_CLR       NAP_CLR           // make text "Naperville" color
 
 #include "words/led_matrix_NAPERVILLE.h"
 
@@ -42,7 +33,7 @@ ALL_BLK_LEDS,
 ALL_BLK_LEDS,
 ALL_BLK_LEDS,
 
-#define SET_CLR       NAP_CLR
+#define SET_CLR       HSK_CLR
 
 #include "words/led_matrix_HUSKIES.h"
 
@@ -88,6 +79,11 @@ ALL_BLK_LEDS,
 ALL_BLK_LEDS,
 ALL_BLK_LEDS,
 
+#include "numbers/led_matrix_6.h"
+
+ALL_BLK_LEDS,
+ALL_BLK_LEDS,
+
 #include "numbers/led_matrix_1.h"
 
 ALL_BLK_LEDS
@@ -100,7 +96,7 @@ int ScrollDelay = 75;      // milliseconds
 #define COLUMN_COUNT    (sizeof(Pattern) / sizeof(Pattern[0]))
 
 
-void  showPattern(int scrollMode);
+void  showPattern();
 void  loadColumn(const CRGB pattern[][LED_ROWS], int from, int to);
 void  scrollLEDs(CRGB LEDs[], int columns, int rows);
 
@@ -150,7 +146,7 @@ for (i = 0 ; i < LED_ROWS ; i++) {
 }
 #endif
 
-  showPattern(SCROLL_IN_OUT);
+  showPattern();
 
   delay(5000);
 }
@@ -167,13 +163,7 @@ for (i = 0 ; i < LED_ROWS ; i++) {
 //  "16" is one to the right of the bottom left
 //  "31" is one to the right of the top left
 //  "32" is one to the right of "31" - and so on...
-//
-//  two display modes - both scroll if the pattern is longer than the number of columns in the matrix
-//
-//  SCROLL_IN_OUT - start with black and scroll entire pattern in on right and off on left
-//  SCROLL_FULL - start with full matrix and scroll right until last column in pattern is on right column
-
-void showPattern(int scrollMode) {
+void showPattern() {
 
   fill_solid(Leds, LED_ROWS * LED_COLS, CRGB::Black);
   FastLED.show();
@@ -190,70 +180,27 @@ void showPattern(int scrollMode) {
 
   int col;
 
-  switch (scrollMode) {
+  
+  loadColumn(Pattern, 0, LED_COLS - 1);   // right col loaded from the first row of pattern
+  FastLED.show();
 
-    case SCROLL_FULL:     // preload the first 16 columns (or less if it's shorter)
-
-      for (col = 0 ; col < ((COLUMN_COUNT > LED_COLS) ? LED_COLS : COLUMN_COUNT) ; col++) {
-        loadColumn(Pattern, col, col);        // first col of the LED matrix is loaded is the
-                                              // first col of the pattern and so on
-      }
-
-      FastLED.show();
-
-      delay(SCROLL_PRE_DELAY);                // if the display doesn't fill, we only delay once
-
-      if (col < (LED_COLS - 1)) {
-        return;                               // the pattern did not fill the entire matrix so we're done
-      }
-
-      break;
-
-    case SCROLL_IN_OUT:
-      loadColumn(Pattern, 0, LED_COLS - 1);   // right col loaded from the first row of pattern
-      FastLED.show();
-
-      col = 1;                                // we only showed one column so far
-
-      break;
-  }
-
-  // once we're here, we've handled the first set of operations regardless of the scroll mode
-  //
-  // if SCROLL_FULL, the matrix has been fully populated - all 16 columns (with more to go
-  // potentially if there are more than 16 cols in the pattern)
-  //
-  // if SCROLL_IN_OUT, the last (rightmost) column has been filled (with more to go
+  // the last (rightmost) column has been filled (with more to go
   // if there is more than one column in the pattern)
   //
   // so, let's move the pattern to the right
   //
   // we continue until the last line of the pattern hits the rightmost column
-  //
-  // after that, we need to consider the scroll mode to tell us whether we need to scroll
-  // it off or not
-
-  // we start col from where we left off so no intialization
-
-  for ( ; col < COLUMN_COUNT ; col++) {
+ 
+  for ( col = 1; col < COLUMN_COUNT ; col++) {
     delay(ScrollDelay);                                           // delay first - then slide left
     scrollLEDs();                                                 // scroll everything left one column
     loadColumn(Pattern, col, LED_COLS - 1);                       // load the right col
     FastLED.show();
   }
 
-  // at this point, the last row in the pattern is in the rightmost column
-  //
-  // for SCROLL_FULL, we're done - just return
-  //
-  // for SCROLL_IN_OUT, we need to scroll things off to the left so we're all dark at the end
-
-  if (scrollMode == SCROLL_FULL) {
-    delay(SCROLL_POST_DELAY);
-    return;
-  }
-
-  // we're in SCROLL_IN_OUT mode
+// at this pont, we've loaded and shown everything
+//
+// the next section just scrolls the pattern off the matrix
 
   for (col = 0; col < LED_COLS ; col++) {
     delay(ScrollDelay);
