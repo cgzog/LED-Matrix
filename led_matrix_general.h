@@ -8,7 +8,7 @@
 
 #define   NAP_CLR       CRGB::Blue                // "NAPERVILLE" color
 #define   HSK_CLR       CRGB::DarkOrange          // "HUSKIES" color
-#define   FRC_CLR       CRGB::Beige               // Team number color
+#define   FRC_CLR       0xABAB9A                  // Team number color (darker Beige)
 
 
 // an entire columns of black LEDs - good for spacing between letters
