@@ -5,6 +5,9 @@
 #define NUM_LEDS        (LED_ROWS * LED_COLS)
 
 
+int ScrollDelay = LED_SCROLL_SPEED;     // variable in case we make it controllable later
+
+
 CRGB Leds[NUM_LEDS];
 
 
@@ -47,51 +50,52 @@ ALL_BLK_LEDS,
 
 #define SET_CLR       FRC_CLR
 
-#include "letters/led_matrix_F.h"
-
-ALL_BLK_LEDS,
-ALL_BLK_LEDS,
-
-#include "letters/led_matrix_R.h"
-
-ALL_BLK_LEDS,
-ALL_BLK_LEDS,
-
-#include "letters/led_matrix_C.h"
+#include "words/led_matrix_FIRST.h"
 
 ALL_BLK_LEDS,
 ALL_BLK_LEDS,
 ALL_BLK_LEDS,
 ALL_BLK_LEDS,
-
-#include "letters/led_matrix_hash.h"
-
+ALL_BLK_LEDS,
 ALL_BLK_LEDS,
 ALL_BLK_LEDS,
 
-#include "numbers/led_matrix_3.h"
+#include "words/led_matrix_ROBOTICS.h"
 
 ALL_BLK_LEDS,
 ALL_BLK_LEDS,
-
-#include "numbers/led_matrix_0.h"
-
 ALL_BLK_LEDS,
 ALL_BLK_LEDS,
-
-#include "numbers/led_matrix_6.h"
-
+ALL_BLK_LEDS,
 ALL_BLK_LEDS,
 ALL_BLK_LEDS,
 
-#include "numbers/led_matrix_1.h"
+#include "words/led_matrix_COMPETITION.h"
+
+ALL_BLK_LEDS,
+ALL_BLK_LEDS,
+ALL_BLK_LEDS,
+ALL_BLK_LEDS,
+ALL_BLK_LEDS,
+ALL_BLK_LEDS,
+ALL_BLK_LEDS,
+
+#include "words/led_matrix_TEAM.h"
+
+ALL_BLK_LEDS,
+ALL_BLK_LEDS,
+ALL_BLK_LEDS,
+ALL_BLK_LEDS,
+ALL_BLK_LEDS,
+ALL_BLK_LEDS,
+ALL_BLK_LEDS,
+
+#include "words/led_matrix_3061.h"
 
 ALL_BLK_LEDS
 
 };
 
-
-int ScrollDelay = 75;      // milliseconds
 
 #define COLUMN_COUNT    (sizeof(Pattern) / sizeof(Pattern[0]))
 
@@ -116,39 +120,10 @@ void loop() {
 
   fill_solid(Leds, LED_ROWS * LED_COLS, CRGB::Black);
   FastLED.show();
-  
-#ifdef NEVER
-  Leds[0] = CRGB::Red;
-  Leds[15] = CRGB::Blue;
-  Leds[16] = CRGB::Green;
-  Leds[31] = CRGB::Cyan;
-  Leds[224] = CRGB::Green;
-  Leds[230] = CRGB::DarkOrange;
-  Leds[233] = CRGB::Green;
-  Leds[239] = CRGB::Yellow;
-  Leds[240] = CRGB::Blue;
-  Leds[243] = CRGB::Cyan;
-  Leds[246] = CRGB::DarkOrange;
-  Leds[249] = CRGB::Green;
-  Leds[252] = CRGB::Purple;
-  Leds[255] = CRGB::Red;
-
-  FastLED.show();
-  delay(1000);
-
-int i;
-
-for (i = 0 ; i < LED_ROWS ; i++) {
-  scrollLEDs();
-
-  FastLED.show();
-  delay(600);
-}
-#endif
 
   showPattern();
 
-  delay(5000);
+  delay(INTER_MSG_DELAY);
 }
 
 
