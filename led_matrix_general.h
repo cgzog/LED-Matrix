@@ -1,6 +1,9 @@
 // some defines to make the pattern definition a little easier to handle and easier to
 // do in a bulk sort of way
 
+#ifndef LED_MATRIX_GENERAL_H
+#define LED_MATRIX_GENERAL_H
+
 #define LED_BRIGHTNESS      30
 
 #define LED_SCROLL_SPEED    65    // milliseconds between scroll shifts
@@ -16,3 +19,5 @@
 
 // an entire columns of black LEDs - good for spacing between letters
 #define  ALL_BLK_LEDS   { BLK_CLR, BLK_CLR, BLK_CLR, BLK_CLR, BLK_CLR, BLK_CLR, BLK_CLR, BLK_CLR, BLK_CLR, BLK_CLR, BLK_CLR, BLK_CLR, BLK_CLR, BLK_CLR, BLK_CLR, BLK_CLR }
+
+#endif  // LED_MATRIX_GENERAL_H

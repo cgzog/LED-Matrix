@@ -1,5 +1,7 @@
 #include <FastLED.h>
 
+#include "led_matrix_general.h"
+
 #define LED_ROWS        16
 #define LED_COLS        16
 #define NUM_LEDS        (LED_ROWS * LED_COLS)
